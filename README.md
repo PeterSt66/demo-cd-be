@@ -1,4 +1,4 @@
-# Demo application for CD - Frontend
+# Demo application for CD - Backend
 This example can be used as a demonstration backend application for Continuous Delivery in a container environment.
 See demo-cd-fe
 
