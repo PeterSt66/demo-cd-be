@@ -1,0 +1,98 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    name: @ProjectIdGoesHere@-is-@LowcaseFeatureNameGoesHere@
+    labels:
+      app: @ProjectIdGoesHere@
+      region: primary
+  spec:
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: @DockerImageRepoGoesHere@/demo-fe:@VersionTagGoesHere@
+      importPolicy: 
+        scheduled: true
+      name: master
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    labels:
+      app: @ProjectIdGoesHere@-@LowcaseFeatureNameGoesHere@
+      run: @ProjectIdGoesHere@-@LowcaseFeatureNameGoesHere@
+    name: @ProjectIdGoesHere@-@LowcaseFeatureNameGoesHere@
+  spec:
+    replicas: 1
+    selector:
+      run: @ProjectIdGoesHere@-@LowcaseFeatureNameGoesHere@
+    strategy:
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          run: @ProjectIdGoesHere@-@LowcaseFeatureNameGoesHere@
+          partof: @ProjectIdGoesHere@-@LowcaseFeatureNameGoesHere@
+      spec:
+        containers:
+        - image: @DockerImageRepoGoesHere@/@ProjectIdGoesHere@:@VersionTagGoesHere@
+          imagePullPolicy: Always
+          name: @ProjectIdGoesHere@-pod-@LowcaseFeatureNameGoesHere@
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          ports:
+            -
+              containerPort: 8081
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 1500m
+              memory: 512Mi
+            requests:
+              cpu: 400m
+              memory: 512Mi
+          livenessProbe:
+            tcpSocket:
+              port: 8081
+            initialDelaySeconds: 6
+            timeoutSeconds: 1
+            periodSeconds: 2
+            successThreshold: 1
+            failureThreshold: 10
+          readinessProbe:
+            httpGet:
+              path: /lc/ping
+              port: 8081
+            initialDelaySeconds: 6
+            timeoutSeconds: 1
+            periodSeconds: 30
+            successThreshold: 2
+            failureThreshold: 10
+          lifecycle:
+            preStop:
+              httpGet:
+                  path: "/lc/stop"
+                  port: 8080
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: @ProjectIdGoesHere@-service-@LowcaseFeatureNameGoesHere@
+    labels:
+      app: @ProjectIdGoesHere@
+  spec:
+    ports:
+      - port: 8081
+        targetPort: 8081
+    selector:
+       run: @ProjectIdGoesHere@-@LowcaseFeatureNameGoesHere@
+kind: List
+metadata: {}
+

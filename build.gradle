@@ -1,0 +1,65 @@
+buildscript {
+    ext {
+        javaVersion = 1.7
+        springBootVersion = '1.4.2.RELEASE'
+    }
+
+	repositories {
+	    mavenLocal()
+	    mavenCentral() 
+	    jcenter()
+	}
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+    }
+}
+
+group = 'demo.cd'
+version = '1.0.0'
+
+description = 'demo-cd-be'
+
+apply plugin: 'maven'
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'checkstyle'
+
+repositories {
+    mavenLocal()
+    mavenCentral() 
+    jcenter()
+}
+
+dependencies {
+    compile('org.springframework.boot:spring-boot-starter-web') {
+        exclude(module: 'spring-boot-starter-tomcat')
+    }
+    compile 'org.springframework.boot:spring-boot-starter-undertow'
+    compile 'org.springframework.boot:spring-boot-devtools'
+    
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.3'
+    compile 'net.logstash.logback:logstash-logback-encoder:4.5.1'
+    compile 'org.projectlombok:lombok'
+       
+    // Test dependencies
+    testCompile('org.springframework.boot:spring-boot-starter-test') {
+        exclude(module: 'commons-logging')
+    }
+}
+
+sourceCompatibility = "${javaVersion}"
+targetCompatibility = "${javaVersion}"
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+
+springBoot {
+    executable = true
+    buildInfo()
+}
+
+checkstyle {
+   showViolations = true
+}
+
