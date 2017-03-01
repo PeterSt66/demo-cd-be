@@ -3,30 +3,30 @@ items:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    name: @ProjectIdGoesHere@-is-@LowcaseFeatureNameGoesHere@
+    name: @ProjectIdGoesHere@-is-@VersionTagGoesHere@
     labels:
-      app: @ProjectIdGoesHere@
+      app: @ProjectIdGoesHere@-@VersionTagGoesHere@
       region: primary
   spec:
     tags:
     - annotations: null
       from:
         kind: DockerImage
-        name: @DockerImageRepoGoesHere@/demo-fe:@VersionTagGoesHere@
-      importPolicy: 
+        name: @DockerImageRepoGoesHere@/@ProjectIdGoesHere@:@VersionTagGoesHere@
+      importPolicy:
         scheduled: true
       name: master
 - apiVersion: v1
   kind: DeploymentConfig
   metadata:
     labels:
-      app: @ProjectIdGoesHere@-@LowcaseFeatureNameGoesHere@
-      run: @ProjectIdGoesHere@-@LowcaseFeatureNameGoesHere@
-    name: @ProjectIdGoesHere@-@LowcaseFeatureNameGoesHere@
+      app: @ProjectIdGoesHere@
+      run: @ProjectIdGoesHere@-@VersionTagGoesHere@
+    name: @ProjectIdGoesHere@-dc-@VersionTagGoesHere@
   spec:
     replicas: 1
     selector:
-      run: @ProjectIdGoesHere@-@LowcaseFeatureNameGoesHere@
+      run: @ProjectIdGoesHere@-@VersionTagGoesHere@
     strategy:
       resources: {}
       rollingParams:
@@ -39,13 +39,13 @@ items:
     template:
       metadata:
         labels:
-          run: @ProjectIdGoesHere@-@LowcaseFeatureNameGoesHere@
-          partof: @ProjectIdGoesHere@-@LowcaseFeatureNameGoesHere@
+          run: @ProjectIdGoesHere@-@VersionTagGoesHere@
+          partof: @ProjectIdGoesHere@-@VersionTagGoesHere@
       spec:
         containers:
         - image: @DockerImageRepoGoesHere@/@ProjectIdGoesHere@:@VersionTagGoesHere@
           imagePullPolicy: Always
-          name: @ProjectIdGoesHere@-pod-@LowcaseFeatureNameGoesHere@
+          name: @ProjectIdGoesHere@-pod-@VersionTagGoesHere@
           resources: {}
           terminationMessagePath: /dev/termination-log
           ports:
@@ -62,20 +62,20 @@ items:
           livenessProbe:
             tcpSocket:
               port: 8081
-            initialDelaySeconds: 6
-            timeoutSeconds: 1
-            periodSeconds: 2
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 4
             successThreshold: 1
-            failureThreshold: 10
+            failureThreshold: 15
           readinessProbe:
             httpGet:
               path: /lc/ping
               port: 8081
-            initialDelaySeconds: 6
-            timeoutSeconds: 1
+            initialDelaySeconds: 12
+            timeoutSeconds: 8
             periodSeconds: 30
-            successThreshold: 2
-            failureThreshold: 10
+            successThreshold: 1
+            failureThreshold: 15
           lifecycle:
             preStop:
               httpGet:
@@ -84,7 +84,7 @@ items:
 - apiVersion: v1
   kind: Service
   metadata:
-    name: @ProjectIdGoesHere@-service-@LowcaseFeatureNameGoesHere@
+    name: @ProjectIdGoesHere@-svc-@VersionTagGoesHere@
     labels:
       app: @ProjectIdGoesHere@
   spec:
@@ -92,7 +92,7 @@ items:
       - port: 8081
         targetPort: 8081
     selector:
-       run: @ProjectIdGoesHere@-@LowcaseFeatureNameGoesHere@
+       run: @ProjectIdGoesHere@-@VersionTagGoesHere@
 kind: List
 metadata: {}
 

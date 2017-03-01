@@ -22,7 +22,8 @@ public class DeployInfo {
     
     sys.put("Hostname", env.get("HOSTNAME"));
     sys.put("java_runtime_version", System.getProperty("java.runtime.version"));
-    
+    sys.put("workdir", env.get("PWD"));
+            
     String now = BASIC_DATE_FMT.format(new Date()) + " CET";
 
     sys.put("request_ts", now);

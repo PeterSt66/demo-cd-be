@@ -1,0 +1,76 @@
+apiVersion: v1
+items:
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    name: @ProjectIdGoesHere@-@VersionTagGoesHere@
+  spec:
+    replicas: 1
+    template:
+      metadata:
+        labels:
+          app: @ProjectIdGoesHere@-@VersionTagGoesHere@
+      spec:
+        imagePullSecrets:
+        - name: docker-repo-4407-login
+        containers:
+        - image: @DockerImageRepoGoesHere@/@ProjectIdGoesHere@:@VersionTagGoesHere@
+          imagePullPolicy: Always
+          lifecycle:
+            preStop:
+              httpGet:
+                path: /lc/stop
+                port: 8081
+                scheme: HTTP
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 6
+            periodSeconds: 3
+            successThreshold: 1
+            tcpSocket:
+              port: 8081
+            timeoutSeconds: 1
+          name: @ProjectIdGoesHere@-pod-@VersionTagGoesHere@
+          ports:
+          - containerPort: 8081
+            name: http-port-app
+            protocol: TCP
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /lc/ping
+              port: 8081
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 2
+          resources:
+            limits:
+              cpu: 1500m
+              memory: 512Mi
+            requests:
+              cpu: 400m
+              memory: 512Mi
+          terminationMessagePath: /dev/termination-log
+        restartPolicy: Always
+        terminationGracePeriodSeconds: 10
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+        app: @ProjectIdGoesHere@-svc-@VersionTagGoesHere@
+    name: @ProjectIdGoesHere@-svc-@VersionTagGoesHere@
+  spec:
+    ports:
+    - port: 8081
+      protocol: TCP
+      targetPort: 8081
+    selector:
+      app: @ProjectIdGoesHere@-@VersionTagGoesHere@
+    sessionAffinity: None
+    type: ClusterIP
+kind: List
+metadata: {}
+resourceVersion: ""
+selfLink: ""
