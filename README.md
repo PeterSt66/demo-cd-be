@@ -1,4 +1,4 @@
-# Demo application for CD - Frontend
+# Demo application for CD - Backend
 This example can be used as a demonstration backend application for Continuous Delivery in a container environment.
 See demo-cd-fe
 
@@ -10,7 +10,7 @@ bower install
 
 Then you can run Gradle to package the application:
 ```
-mvn clean bootRepackage
+gradle clean bootRepackage
 ```
 
 Now you can run the Java application quite easily:
